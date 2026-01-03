@@ -1,0 +1,7 @@
+{
+  "name": "Audio-X",
+  "description": "A zero-failure, high-fidelity DJ application clone featuring professional grade audio engine, stem separation architecture, and reactive visual interface.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
