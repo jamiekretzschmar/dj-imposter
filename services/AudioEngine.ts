@@ -1,5 +1,4 @@
 import { DeckId, TrackMetadata } from '../types';
-import { WORKLET_CODE } from '../constants';
 import Database from './Database';
 import Analyzer from './Analyzer';
 
@@ -108,17 +107,6 @@ class AudioEngine {
     const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
     this.context = new AudioContextClass({ latencyHint: 'interactive' });
     
-    // Load Worklet
-    if (this.context && this.context.audioWorklet) {
-        try {
-            const blob = new Blob([WORKLET_CODE], { type: 'application/javascript' });
-            const url = URL.createObjectURL(blob);
-            await this.context.audioWorklet.addModule(url);
-        } catch (e) {
-            console.warn("AudioWorklet failed to load", e);
-        }
-    }
-
     if (this.context) {
         this.masterGain = this.context.createGain();
         this.masterGain.connect(this.context.destination);
@@ -217,7 +205,11 @@ class AudioEngine {
     deck.source.connect(deck.stemVocalsFilter);
     deck.source.connect(deck.stemHarmonicFilter);
 
-    deck.startTime = this.context.currentTime - deck.pauseTime;
+    // Correctly calculate start time to account for playbackRate changes between pauses
+    // Formula: We need to set startTime such that: (now - startTime) * rate = pauseTime
+    // Therefore: startTime = now - (pauseTime / rate)
+    deck.startTime = this.context.currentTime - (deck.pauseTime / deck.playbackRate);
+
     deck.source.start(0, deck.pauseTime);
     deck.isPlaying = true;
   }
@@ -227,6 +219,7 @@ class AudioEngine {
     if (!this.context || !deck.isPlaying || !deck.source) return;
 
     deck.source.stop();
+    // Calculate current position in the buffer (in seconds)
     deck.pauseTime = (this.context.currentTime - deck.startTime) * deck.playbackRate % deck.buffer!.duration;
     
     // Safety check for negative values if duration is weird
@@ -237,7 +230,6 @@ class AudioEngine {
     deck.isPlaying = false;
   }
 
-  // ... (seek, setSpeed, setEQ, setStem methods remain same)
   public seek(deckId: DeckId, time: number) {
     const deck = this.decks![deckId];
     const wasPlaying = deck.isPlaying;

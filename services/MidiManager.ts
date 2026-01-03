@@ -13,6 +13,8 @@ export class MidiManager {
   }
 
   public async init() {
+    if (this.access) return; // Prevent re-initialization
+
     if (navigator.requestMIDIAccess) {
       try {
         this.access = await navigator.requestMIDIAccess();
