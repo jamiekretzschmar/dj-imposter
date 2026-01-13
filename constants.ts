@@ -6,6 +6,24 @@ export const LATENCY_HINT = 'interactive';
 
 // Using known reliable CORS-enabled audio samples
 export const SAMPLE_TRACKS: TrackMetadata[] = [
+ {
+    id: 'track1',
+    title: 'My Song Name',
+    artist: 'Me',
+    bpm: 120,
+    url: '/music/track1.mp3',
+    cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=50',
+ },
+
+ {
+    id: 'track2',
+    title: 'My Song Name2',
+    artist: 'Me',
+    bpm: 120,
+    url: '/music/track2.mp3',
+    cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=50',
+ },
+
   {
     id: 't1',
     title: 'Lepidoptera',

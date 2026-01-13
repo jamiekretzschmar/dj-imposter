@@ -92,7 +92,7 @@ export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [activeDeckLoad, setActiveDeckLoad] = useState<DeckId | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
   const automixTriggeredRef = useRef<boolean>(false);
 
   useEffect(() => {
